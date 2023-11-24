@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO
-// 첫 번째 터치 후, 캐릭터가 이동 할 수 있도록 해주세요!
 
 /// <summary>
 /// 플레이어가 조작하는 캐릭터에 들어가는 컴포넌트입니다.
@@ -18,11 +16,18 @@ public class Player : MonoBehaviour
     /// </summary>
     private float _YVelocity;
 
+    /// <summary>
+    /// 게임이 시작되었음을 나타냅니다.
+    /// </summary>
+    private bool _IsGameStarted;
+
+
     private void Update()
     {
         // 마우스 왼쪽 클릭 시
         if (Input.GetMouseButtonDown(0))
         {
+            _IsGameStarted = true;
             // Input : 입력에 대한 기능을 제공하는 클래스
             // GetMouseButton() : 마우스 버튼이 눌려있다면 True
             // GetMouseButtonDown() : 마우스 버튼을 누를 때 True
@@ -35,6 +40,7 @@ public class Player : MonoBehaviour
 
         // 중력 계산
         ApplyGravity();
+
 
         // 속도에 따라 캐릭터를 이동시킵니다.
         Move();
@@ -61,6 +67,8 @@ public class Player : MonoBehaviour
     /// </summary>
     private void ApplyGravity()
     {
+        if (!_IsGameStarted) return;
+
         // Edit -> ProjectStrings 창의 Physics2D 에 설정된 중력 Y 값을 얻습니다.
         // 이 값은 엔진에 설정된 중력값이며, 필요에 따라 사용자가 변경할 수 있습니다.
         float engineGravity = Mathf.Abs(Physics2D.gravity.y) * 0.01f;
