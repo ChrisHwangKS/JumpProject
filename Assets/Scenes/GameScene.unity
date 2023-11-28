@@ -354,7 +354,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0357cdd221ba70d47bb970acba17d7e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ColumnCount: 10
+  m_ColumnCount: 5
+  m_Colors:
+  - {r: 1, g: 0, b: 0, a: 1}
+  - {r: 1, g: 0.4957481, b: 0, a: 1}
+  - {r: 1, g: 0.96918243, b: 0, a: 1}
+  - {r: 0, g: 1, b: 0.036482334, a: 1}
+  - {r: 0, g: 0.0071513653, b: 1, a: 1}
+  - {r: 0, g: 1, b: 0.96961546, a: 1}
+  - {r: 0.75743866, g: 0, b: 1, a: 1}
   m_LineGroupPrefab: {fileID: 3018093948647419398, guid: d571e39fc086997408713fa7ff1ce4ea, type: 3}
 --- !u!4 &1194182730
 Transform:
