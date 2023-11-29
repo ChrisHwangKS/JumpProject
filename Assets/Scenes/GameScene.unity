@@ -362,7 +362,7 @@ MonoBehaviour:
   - {r: 0, g: 1, b: 0.036482334, a: 1}
   - {r: 0, g: 0.0071513653, b: 1, a: 1}
   - {r: 0, g: 1, b: 0.96961546, a: 1}
-  - {r: 0.75743866, g: 0, b: 1, a: 1}
+  - {r: 1, g: 1, b: 1, a: 1}
   m_LineGroupPrefab: {fileID: 3018093948647419398, guid: d571e39fc086997408713fa7ff1ce4ea, type: 3}
 --- !u!4 &1194182730
 Transform:

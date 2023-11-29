@@ -112,7 +112,11 @@ public class LineGroup : MonoBehaviour
     /// </summary>
     /// <param name="index">설정시킬 인덱스를 전달합니다.</param>
     /// <param name="colors">사용될 색상 배열을 전달합니다.</param>
-    public void InitializeLineGroup(int index, Color[] colors)
+    /// <param name="colorTypes">사용될 색상 타입 배열을 전달합니다.</param>
+    public void InitializeLineGroup(
+        int index, 
+        Color[] colors, 
+        ColorType[] colorTypes)
     {
         // 라인 인덱스를 설정합니다.
         SetLineGroupIndex(index);
