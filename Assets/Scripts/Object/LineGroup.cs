@@ -27,6 +27,18 @@ public class LineGroup : MonoBehaviour
     /// </summary>
     private float _LineGroupMoveSpeed = 20.0f;
 
+    /// <summary>
+    /// 해당 라인 그룹에서 캐릭터와 충돌했을 때,
+    /// 캐릭터가 통과할 수 있는 색상 타입을 나타냅니다.
+    /// </summary>
+    private ColorType _PassableColor;
+
+    /// <summary>
+    /// 플레이어가 이 라인 그룹을 통과했을 경우,
+    /// 플레이어에게 설정시킬 색상을 나타냅니다.
+    /// </summary>
+    private ColorType _NextColor;
+
     private void Update()
     {
         //라인 그룹 위치 이동
@@ -92,7 +104,8 @@ public class LineGroup : MonoBehaviour
     /// 라인 그룹 내의 라인 오브젝트들을 초기화합니다
     /// </summary>
     /// <param name="colors">사용 가능한 색상들을 전달합니다.</param>
-    private void InitializeLineObject(Color[] colors)
+    /// <param name="colorTypes">사용될 색상 타입들을 순서대로 전달합니다.</param>
+    private void InitializeLineObject(Color[] colors, ColorType[] colorTypes)
     {
         for(int i = 0; i < m_LineObjects.Length; ++i)
         {
@@ -100,10 +113,17 @@ public class LineGroup : MonoBehaviour
             LineObject lineObject = m_LineObjects[i];
 
             // 설정시킬 색상값을 얻습니다.
-            Color lineColor = colors[Random.Range(0, colors.Length)];
+            ColorType colorType = colorTypes[i];
+
+            // 설정시킬 색상값을 얻습니다.
+            Color lineColor = colors[(int)colorType];
 
             // 라인 오브젝트 초기화
-            lineObject.InitializeLineObject(lineColor);
+            lineObject.InitializeLineObject(
+                // 설정시킬 색상을 전달합니다.
+                lineColor :     lineColor,
+                // 통과 가능 여부를 전달합니다.
+                isPassable :    (_PassableColor == colorType));
         }
     }
 
@@ -113,16 +133,26 @@ public class LineGroup : MonoBehaviour
     /// <param name="index">설정시킬 인덱스를 전달합니다.</param>
     /// <param name="colors">사용될 색상 배열을 전달합니다.</param>
     /// <param name="colorTypes">사용될 색상 타입 배열을 전달합니다.</param>
+    /// <param name="passableColor">플레이어 캐릭터를 통과시킬 색상 타입을 전달합니다</param>
+    /// <param name="nextColor">플레이어가 통과된 후 플레이어에게 설정시킬 색상을 전달합니다.</param>
     public void InitializeLineGroup(
         int index, 
         Color[] colors, 
-        ColorType[] colorTypes)
+        ColorType[] colorTypes,
+        ColorType passableColor,
+        ColorType nextColor)
     {
+        _PassableColor = passableColor;
+
+        _NextColor = nextColor;
+
         // 라인 인덱스를 설정합니다.
         SetLineGroupIndex(index);
 
         // 라인 오브젝트들을 모두 초기화합니다.
-        InitializeLineObject(colors);
+        InitializeLineObject(colors, colorTypes);
+
+
     }
 
     /// <summary>

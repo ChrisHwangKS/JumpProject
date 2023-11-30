@@ -49,7 +49,7 @@ public class Player : MonoBehaviour
     /// <summary>
     /// 캐릭터를 점프 시킵니다.
     /// </summary>
-    private void Jump()
+    public void Jump()
     {
         _YVelocity = m_JumpPower;
     }

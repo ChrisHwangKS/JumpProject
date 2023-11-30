@@ -19,6 +19,9 @@ public enum ColorType : sbyte
 
 public class LineGenerator : MonoBehaviour
 {
+    [Header("플레이어 캐릭터")]
+    public Player m_Player;
+
     /// <summary>
     /// 이 값만큼 라인을 생성해둡니다.
     /// </summary>
@@ -47,7 +50,7 @@ public class LineGenerator : MonoBehaviour
         for(int i = 0; i <m_ColumnCount; ++i)
         {
             // 라인 그룹을 생성합니다.
-            GenerateLineGroup(i, nextColor);
+            GenerateLineGroup(i, ref nextColor);
         }
     }
 
@@ -57,19 +60,47 @@ public class LineGenerator : MonoBehaviour
     /// <param name="index">라인 그룹 인덱스를 전달합니다.</param>
     /// <param name="nextColor">포함시킬 색상을 전달합니다.</param>
     /// <returns>생성된 라인 그룹을 반홥합니다.</returns>
-    private LineGroup GenerateLineGroup(int index, ColorType nextColor)
+    private LineGroup GenerateLineGroup(int index, ref ColorType nextColor)
     {
         // 라인 그룹 객체를 복사 생성합니다.
         LineGroup newLineGroup = Instantiate(m_LineGroupPrefab);
 
+        // 생성시킬 라인 그룹에 포함시킬 색상을 저장해둡니다.
+        ColorType inclusiveColor = nextColor;
+
+        // 다음 색상을 랜덤하게 설정합니다.
+        nextColor = GetRandomColorType();
+
         // 생성된 라인 그룹을 초기화합니다.
         newLineGroup.InitializeLineGroup(
-            index,
-            m_Colors,
-            GetSuffledColorTypeArray(nextColor));
+            // 그룹 인덱스를 전달합니다.
+            index :         index,
+            // 라인 그룹에서 사용할 수 있는 색상 배열을 전달합니다.
+            colors :        m_Colors,
+            // 라인 오브젝트들에게 설정시킬 랜덤한 색상 타입 배열을 전달합니다.
+            colorTypes :    GetSuffledColorTypeArray(inclusiveColor),
+            // 이 라인 그룹에서 플레이어를 통과시킬 색상 타입을 전달합니다. (정답 색상 전달)
+            passableColor : inclusiveColor,
+            // 정답 색상을 통과했을 떄, 플레이어에게 설정시킬 다음 색상을 전달합니다.
+            // (다음 라인에 해당 색상을 포함)
+            nextColor :     nextColor);
 
         // 생성된 라인 그룹 객체를 반환합니다.
         return newLineGroup;
+    }
+
+    /// <summary>
+    /// 랜덤한 색상을 반환하는 메서드
+    /// </summary>
+    /// <returns>ColorType 열거형 요소 중 랜덤한 요소를 반환합니다. </returns>
+    private ColorType GetRandomColorType()
+    {
+        // 색상 타입 열거 형식을 배열로 얻습니다.
+        ColorType[] colorTypeArray = System.Enum.GetValues(typeof(ColorType)) as ColorType[];
+
+        // 랜덤한 요소를 반환
+        return colorTypeArray[Random.Range(0,colorTypeArray.Length)];
+
     }
 
     /// <summary>
