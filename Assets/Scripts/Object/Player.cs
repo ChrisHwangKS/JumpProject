@@ -11,6 +11,9 @@ public class Player : MonoBehaviour
     [Header("점프 힘")]
     public float m_JumpPower;
 
+    [Header("중력에 곱해질 승수")]
+    public float m_GravityMultiplier;
+
     /// <summary>
     /// 캐릭터에 적용된 Y 속도입니다.
     /// </summary>
@@ -20,6 +23,21 @@ public class Player : MonoBehaviour
     /// 게임이 시작되었음을 나타냅니다.
     /// </summary>
     private bool _IsGameStarted;
+
+    private void Awake()
+    {
+        Time.fixedDeltaTime = 1 / 60.0f;
+    }
+
+    private void FixedUpdate()
+    {
+        // 중력 계산
+        ApplyGravity();
+
+
+        // 속도에 따라 캐릭터를 이동시킵니다.
+        Move();
+    }
 
 
     private void Update()
@@ -37,13 +55,6 @@ public class Player : MonoBehaviour
             Jump();
 
         }
-
-        // 중력 계산
-        ApplyGravity();
-
-
-        // 속도에 따라 캐릭터를 이동시킵니다.
-        Move();
     }
 
     /// <summary>
@@ -59,7 +70,7 @@ public class Player : MonoBehaviour
     /// </summary>
     private void Move()
     {
-        transform.position += Vector3.up * _YVelocity * Time.deltaTime;
+        transform.position += Vector3.up * _YVelocity;
     }
 
     /// <summary>
@@ -71,7 +82,7 @@ public class Player : MonoBehaviour
 
         // Edit -> ProjectStrings 창의 Physics2D 에 설정된 중력 Y 값을 얻습니다.
         // 이 값은 엔진에 설정된 중력값이며, 필요에 따라 사용자가 변경할 수 있습니다.
-        float engineGravity = Mathf.Abs(Physics2D.gravity.y) * 0.01f;
+        float engineGravity = Mathf.Abs(Physics2D.gravity.y) * m_GravityMultiplier;
 
         // 하강 속도를 증가시킵니다.
         _YVelocity -= engineGravity;

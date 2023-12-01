@@ -39,6 +39,11 @@ public class LineGroup : MonoBehaviour
     /// </summary>
     private ColorType _NextColor;
 
+    /// <summary>
+    /// 플레이어 객체를 나타냅니다.
+    /// </summary>
+    private Player _Player;
+
     private void Update()
     {
         //라인 그룹 위치 이동
@@ -120,6 +125,8 @@ public class LineGroup : MonoBehaviour
 
             // 라인 오브젝트 초기화
             lineObject.InitializeLineObject(
+                // 캐릭터 겹침 메서드 전달
+                OnCharacterOverlapped,
                 // 설정시킬 색상을 전달합니다.
                 lineColor :     lineColor,
                 // 통과 가능 여부를 전달합니다.
@@ -130,18 +137,22 @@ public class LineGroup : MonoBehaviour
     /// <summary>
     /// 라인 그룹을 초기화 합니다.
     /// </summary>
+    /// <param name="player">플레이어 객체를 전달합니다.</param>
     /// <param name="index">설정시킬 인덱스를 전달합니다.</param>
     /// <param name="colors">사용될 색상 배열을 전달합니다.</param>
     /// <param name="colorTypes">사용될 색상 타입 배열을 전달합니다.</param>
     /// <param name="passableColor">플레이어 캐릭터를 통과시킬 색상 타입을 전달합니다</param>
     /// <param name="nextColor">플레이어가 통과된 후 플레이어에게 설정시킬 색상을 전달합니다.</param>
     public void InitializeLineGroup(
+        Player player,
         int index, 
         Color[] colors, 
         ColorType[] colorTypes,
         ColorType passableColor,
         ColorType nextColor)
     {
+        _Player = player;
+
         _PassableColor = passableColor;
 
         _NextColor = nextColor;
@@ -164,6 +175,27 @@ public class LineGroup : MonoBehaviour
         _LineGroupIndex = newIndex;
     }
 
+    /// <summary>
+    /// 플레이어가 이 라인에 겹쳤을 때 호출되는 메서드입니다.
+    /// </summary>
+    /// <param name="isPassable"></param>
+    private void OnCharacterOverlapped(bool isPassable)
+    {
+        // 라인 그룹의 위치를 얻습니다.
+        Vector2 groupPosition = transform.position;
 
+        // 설정시킬 Y 위치를 계산합니다.
+        float newYPosition = groupPosition.y + 1.0f;
+
+        // 플레이어 위치를 조절
+        Vector2 playerPosition = _Player.transform.position;
+        playerPosition.y = newYPosition;
+
+        // 계산한 위치를 적용시킵니다.
+        _Player.transform.position = playerPosition;
+
+        // 플레이어 점프
+        _Player.Jump();
+    }
 
 }

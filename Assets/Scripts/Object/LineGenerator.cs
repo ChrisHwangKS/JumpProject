@@ -73,6 +73,8 @@ public class LineGenerator : MonoBehaviour
 
         // 생성된 라인 그룹을 초기화합니다.
         newLineGroup.InitializeLineGroup(
+            //플레이어 객체를 전달합니다.
+            player :        m_Player,
             // 그룹 인덱스를 전달합니다.
             index :         index,
             // 라인 그룹에서 사용할 수 있는 색상 배열을 전달합니다.
