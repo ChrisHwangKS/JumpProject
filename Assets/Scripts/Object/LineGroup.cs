@@ -2,6 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 라인 그룹 통과 확인을 위한 대리자 형식을 나타냅니다.
+/// </summary>
+/// <param name="passedLineIndex">통과한 라인 인덱스</param>
+/// <param name="nextColor">플레이어에게 설정시킬 색상을 전달합니다.</param>
+public delegate void OnLineGroupPassedSignature(int passedLineIndex, ColorType nextColor);
+
 public class LineGroup : MonoBehaviour
 {
     /// <summary>
@@ -43,6 +50,11 @@ public class LineGroup : MonoBehaviour
     /// 플레이어 객체를 나타냅니다.
     /// </summary>
     private Player _Player;
+
+    /// <summary>
+    /// 라인 그룹 통과 시 발생시킬 이벤트를 나타냅니다.
+    /// </summary>
+    private OnLineGroupPassedSignature _OnLineGroupPassed;
 
     private void Update()
     {
@@ -143,19 +155,23 @@ public class LineGroup : MonoBehaviour
     /// <param name="colorTypes">사용될 색상 타입 배열을 전달합니다.</param>
     /// <param name="passableColor">플레이어 캐릭터를 통과시킬 색상 타입을 전달합니다</param>
     /// <param name="nextColor">플레이어가 통과된 후 플레이어에게 설정시킬 색상을 전달합니다.</param>
+    /// <param name="onLineGroupPassed">라인 그룹 통과시 발생시킬 이벤트를 전달합니다.</param>
     public void InitializeLineGroup(
         Player player,
         int index, 
         Color[] colors, 
         ColorType[] colorTypes,
         ColorType passableColor,
-        ColorType nextColor)
+        ColorType nextColor,
+        OnLineGroupPassedSignature onLineGroupPassed)
     {
         _Player = player;
 
         _PassableColor = passableColor;
 
         _NextColor = nextColor;
+
+        _OnLineGroupPassed = onLineGroupPassed;
 
         // 라인 인덱스를 설정합니다.
         SetLineGroupIndex(index);
@@ -181,21 +197,36 @@ public class LineGroup : MonoBehaviour
     /// <param name="isPassable"></param>
     private void OnCharacterOverlapped(bool isPassable)
     {
-        // 라인 그룹의 위치를 얻습니다.
-        Vector2 groupPosition = transform.position;
+        // 통과 가능한 오브젝트인 경우
+        if(isPassable)
+        {
+            // 라인 그룹의 위치를 얻습니다.
+            Vector2 groupPosition = transform.position;
 
-        // 설정시킬 Y 위치를 계산합니다.
-        float newYPosition = groupPosition.y + 1.0f;
+            // 설정시킬 Y 위치를 계산합니다.
+            float newYPosition = groupPosition.y + 1.0f;
 
-        // 플레이어 위치를 조절
-        Vector2 playerPosition = _Player.transform.position;
-        playerPosition.y = newYPosition;
+            // 플레이어 위치를 조절
+            Vector2 playerPosition = _Player.transform.position;
+            playerPosition.y = newYPosition;
 
-        // 계산한 위치를 적용시킵니다.
-        _Player.transform.position = playerPosition;
+            // 계산한 위치를 적용시킵니다.
+            _Player.transform.position = playerPosition;
 
-        // 플레이어 점프
-        _Player.Jump();
+            // 플레이어 점프
+            _Player.Jump();
+
+            // 라인 통과 이벤트를 발생시킵니다.
+            _OnLineGroupPassed?.Invoke(_LineGroupIndex, _NextColor);
+
+            
+        }
+        // 통과 불가능한 오브젝트인 경우
+        else
+        {
+            Time.timeScale = 0.0f;
+        }
+
     }
 
 }

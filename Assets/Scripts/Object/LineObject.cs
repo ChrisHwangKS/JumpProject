@@ -27,8 +27,6 @@ public class LineObject : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log(collision.gameObject.name);
-
         // 플레이어 겹침 이벤트를 발생시킵니다.
         _OnPlayerOverlapped?.Invoke(_IsPassable);
         //if(_OnPlayerOverlapped != null) _OnPlayerOverlapped(_IsPassable);

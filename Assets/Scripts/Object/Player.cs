@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml.Serialization;
 using UnityEngine;
 
 
@@ -24,8 +25,18 @@ public class Player : MonoBehaviour
     /// </summary>
     private bool _IsGameStarted;
 
+    /// <summary>
+    /// SpriteRenderer 컴포넌트를 나타냅니다.
+    /// </summary>
+    private SpriteRenderer _SpriteRenderer;
+
     private void Awake()
     {
+        // GetComponentInChildren<T>();: 이 오브젝트부터 자식 오브젝트를 모두 확인하며
+        // 지정한 컴포넌트를 찾아 반환하는 메서드
+        _SpriteRenderer= GetComponentInChildren<SpriteRenderer>();
+        
+
         Time.fixedDeltaTime = 1 / 60.0f;
     }
 
@@ -57,13 +68,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 캐릭터를 점프 시킵니다.
-    /// </summary>
-    public void Jump()
-    {
-        _YVelocity = m_JumpPower;
-    }
 
     /// <summary>
     /// 속도에 따라 캐릭터를 이동시킵니다.
@@ -86,5 +90,23 @@ public class Player : MonoBehaviour
 
         // 하강 속도를 증가시킵니다.
         _YVelocity -= engineGravity;
+    }
+
+    /// <summary>
+    /// 캐릭터를 점프 시킵니다.
+    /// </summary>
+    public void Jump()
+    {
+        _YVelocity = m_JumpPower;
+    }
+
+    /// <summary>
+    /// 색상을 설정합니다
+    /// </summary>
+    /// <param name="newColor">설정시킬 색상을 전달합니다.</param>
+    public void SetColor(Color newColor)
+    {
+        // 표시되는 색상을 설정합니다.
+        _SpriteRenderer.color = newColor;
     }
 }
