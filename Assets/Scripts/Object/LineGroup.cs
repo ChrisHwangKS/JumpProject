@@ -7,7 +7,8 @@ using UnityEngine;
 /// </summary>
 /// <param name="passedLineIndex">통과한 라인 인덱스</param>
 /// <param name="nextColor">플레이어에게 설정시킬 색상을 전달합니다.</param>
-public delegate void OnLineGroupPassedSignature(int passedLineIndex, ColorType nextColor);
+/// <param name="isGameOver">게임 오버 여부를 전달합니다.</param>
+public delegate void OnLineGroupPassedSignature(int passedLineIndex, ColorType nextColor, bool isGameOver);
 
 public class LineGroup : MonoBehaviour
 {
@@ -15,6 +16,11 @@ public class LineGroup : MonoBehaviour
     /// 라인 그룹 사이의 간격을 나타냅니다.
     /// </summary>
     private const float LINE_GROUP_TERM = 0.5f;
+
+    /// <summary>
+    /// 첫번째 라인 오브젝트의 위치를 나타냅니다.
+    /// </summary>
+    private static float _FirstLineObjectPosition;
 
     [Header("라인 오브젝트")]
     public LineObject[] m_LineObjects;
@@ -88,8 +94,13 @@ public class LineGroup : MonoBehaviour
 
             // 위치를 적용합니다.
             lineObject.transform.position = linePosition;
+        }
 
-            
+        // 다른 라인과 위치를 동기화 시키기 위해
+        // 첫 번째 라인 그룹인 경우에만 첫 번째 라인 오브젝트의 위치를 저장합니다.
+        if(_LineGroupIndex == 0)
+        {
+            _FirstLineObjectPosition = m_LineObjects[0].transform.localPosition.x;
         }
     }
 
@@ -124,6 +135,14 @@ public class LineGroup : MonoBehaviour
     /// <param name="colorTypes">사용될 색상 타입들을 순서대로 전달합니다.</param>
     private void InitializeLineObject(Color[] colors, ColorType[] colorTypes)
     {
+        // 두번째 라인 오브젝트의 위치
+        float secondLineObjectXPos = m_LineObjects[1].transform.localPosition.x;
+        // 첫번째 라인 오브젝트의 위치
+        float firstLineObjectXPos = m_LineObjects[0].transform.localPosition.x;
+        // 라인 오브젝트 둘 사이의 텀
+        float lineObjectTerm = secondLineObjectXPos - firstLineObjectXPos;
+
+
         for(int i = 0; i < m_LineObjects.Length; ++i)
         {
             // i 번째 LineObject 를 얻습니다.
@@ -143,6 +162,9 @@ public class LineGroup : MonoBehaviour
                 lineColor :     lineColor,
                 // 통과 가능 여부를 전달합니다.
                 isPassable :    (_PassableColor == colorType));
+
+            // 라인 오브젝트 위치 동기화
+            lineObject.transform.localPosition = Vector3.right * (_FirstLineObjectPosition + i * lineObjectTerm);
         }
     }
 
@@ -215,10 +237,6 @@ public class LineGroup : MonoBehaviour
 
             // 플레이어 점프
             _Player.Jump();
-
-            // 라인 통과 이벤트를 발생시킵니다.
-            _OnLineGroupPassed?.Invoke(_LineGroupIndex, _NextColor);
-
             
         }
         // 통과 불가능한 오브젝트인 경우
@@ -226,6 +244,9 @@ public class LineGroup : MonoBehaviour
         {
             Time.timeScale = 0.0f;
         }
+
+        // 라인 통과 이벤트를 발생시킵니다.
+        _OnLineGroupPassed?.Invoke(_LineGroupIndex, _NextColor, isPassable);
 
     }
 

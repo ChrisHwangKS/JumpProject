@@ -194,7 +194,8 @@ public class LineGenerator : MonoBehaviour
     /// </summary>
     /// <param name="passedLineIndex">통과한 라인 인덱스가 전달됩니다.</param>
     /// <param name="nextColor">플레이어에게 설정 시킬 다음 색상이 전달됩니다.</param>
-    private void OnLineGroupPassed(int passedLineIndex, ColorType nextColor)
+    /// <param name="isGameOver">게임 오버 여부를 전달합니다.</param>
+    private void OnLineGroupPassed(int passedLineIndex, ColorType nextColor, bool isGameOver)
     {
         // 라인 그룹 제거
         PopLineGroup(passedLineIndex);
@@ -204,6 +205,19 @@ public class LineGenerator : MonoBehaviour
 
         // 플레이어의 색상을 설정합니다.
         SetPlayerColor(nextColor);
+
+        // 게임 오버가 된 경우
+        if(isGameOver)
+        {
+            // 게임 오버 메서드 호출
+            m_Player.OnGameOver();
+        }
+        // 게임 오버가 되지 않은 경우
+        else
+        {
+            // 라인 통과 메서드 호출
+            m_Player.OnLinePassed();
+        }
     }
 
     /// <summary>
@@ -263,7 +277,7 @@ public class LineGenerator : MonoBehaviour
         if (emptyIndex == -1) return;
 
         // 라인 그룹을 생성합니다.
-        GenerateLineGroup(emptyIndex);
+        _GeneratedLines[emptyIndex] = GenerateLineGroup(emptyIndex);
     }
 
     /// <summary>
