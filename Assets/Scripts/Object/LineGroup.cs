@@ -246,7 +246,7 @@ public class LineGroup : MonoBehaviour
         }
 
         // 라인 통과 이벤트를 발생시킵니다.
-        _OnLineGroupPassed?.Invoke(_LineGroupIndex, _NextColor, isPassable);
+        _OnLineGroupPassed?.Invoke(_LineGroupIndex, _NextColor, !isPassable);
 
     }
 
